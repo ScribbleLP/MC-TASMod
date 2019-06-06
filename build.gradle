@@ -2,18 +2,28 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://repo.spongepowered.org/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     }
 }
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'java'
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+//Edited exactly what the line above tells me not to edit. Added MixinGradle.
 
-
-version = "1.0"
-group = "com.yourname.modid" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "modid"
+version = "snapshot-1.14"
+group = "de.tr7zw.tas" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "TASmod-1.12.2"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
@@ -23,7 +33,7 @@ compileJava {
 minecraft {
     version = "1.12-14.21.1.2443"
     runDir = "run"
-    
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
@@ -33,12 +43,36 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+configurations {
+    bundled
+    provided
+    // Make compile extend from our provided configuration so that things added to bundled end up on the compile classpath
+    compile.extendsFrom(bundled)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+}
 dependencies {
-    // you may put jars on which you depend on in ./libs
+    compile('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+        exclude module: 'log4j-core'
+    }
+    compile 'org.msgpack:msgpack-core:0.8.16'
+    compile 'org.msgpack:jackson-dataformat-msgpack:0.8.16'
+
+    //you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
     //compile "some.group:artifact:version"
-      
+
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
@@ -65,13 +99,59 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+
+    rename '(.+_at.cfg)', 'META-INF/$1'
 }
+
+sourceSets {
+    main {
+        ext.refMap = "mixins.tas.refmap.json"
+    }
+}
+
+shadowJar {
+    mainSpec.sourcePaths.clear()
+
+    dependsOn reobfJar
+
+    configurations = [project.configurations.compile]
+    relocate 'org.msgpack', 'de.tr7zw.tas.repack.org.msgpack'
+    relocate 'com.fasterxml', 'de.tr7zw.tas.repack.com.fasterxml'
+    classifier "shadow"
+    exclude 'dummyThing'
+
+
+    afterEvaluate {
+        from zipTree(reobfJar.jar)
+    }
+}
+
+jar {
+    manifest.attributes(
+            'FMLAT': 'TASMOD_at.cfg',
+            'MixinConfigs': 'mixins.tas.json',
+            'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+            'FMLCorePluginContainsFMLMod': 'true',
+            'ForceLoadAsMod': 'true'
+    )
+}
+
+mixin {
+    // Specify "notch" or "searge" here
+    defaultObfuscationEnv searge
+    add sourceSets.main, "mixins.tas.refmap.json"
+}
+
+
+
+
+
