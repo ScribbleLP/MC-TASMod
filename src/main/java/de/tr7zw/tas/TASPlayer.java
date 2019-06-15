@@ -1,6 +1,7 @@
 package de.tr7zw.tas;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import de.tr7zw.tas.duck.PlaybackInput;
 import de.tr7zw.tas.duck.TASGuiContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -55,6 +56,7 @@ public class TASPlayer implements PlaybackMethod {
                 mc.player.motionZ = 0;
                 Minecraft.getMinecraft().displayGuiScreen(new GuiScreen() {
                 });
+                ((PlaybackInput)Minecraft.getMinecraft().player.movementInput).setPlayback(null);
                 return;
             }
             return;
