@@ -18,9 +18,9 @@ Basically the same :D
 But as you know Minecraft doesn't run in an emulator and therefore we don't have these common tools available...  
 There is a program that supports PC games called LibTAS which is only available on Linux, but Minecraft has problems with that, since it doesn't run on a consistent framerate and it runs on a tick system (20 ticks/s)
 So we use mods to accomplish our goals.  
-There has been a [TickrateChanger]([https://github.com/Guichaguri/TickrateChanger](https://github.com/Guichaguri/TickrateChanger)) mod to slow down the game and a new [TASTools]([https://github.com/ScribbleLP/MC-TASTools](https://github.com/ScribbleLP/MC-TASTools)) for savestates.  
+There has been a [TickrateChanger](https://github.com/Guichaguri/TickrateChanger) mod to slow down the game and a new [TASTools](https://github.com/ScribbleLP/MC-TASTools) for savestates.  
 And with this, we want to create a playback tool to complete all the tools used for creating TASses (especially playing them back)  
-In addition to that, famous1622 is working on a mod to make [RNG]([https://github.com/famous1622/KillTheRNG](https://github.com/famous1622/KillTheRNG)) consistent which is pretty helpful if you consider that it can desync if mobs don't spawn where you want it...
+In addition to that, famous1622 is working on a mod to make [RNG](https://github.com/famous1622/KillTheRNG) consistent which is pretty helpful if you consider that it can desync if mobs don't spawn where you want it...
 ## Commands
 Arguments written like this are `<required>` and like this is `[optional]`  
 
