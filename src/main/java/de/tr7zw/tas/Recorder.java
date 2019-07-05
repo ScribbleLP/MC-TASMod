@@ -1,14 +1,11 @@
 package de.tr7zw.tas;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.inventory.Slot;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.awt.*;
 import java.io.File;
@@ -157,7 +154,7 @@ public class Recorder {
                     gui_slotUnderMouse, gui_clicked, gui_mouseX, gui_mouseY, gui_mouseButton,
                     gui_typed, gui_typedChar, gui_keyCode,
                     gui_clickmoved, gui_timeSinceLastClick,
-                    gui_released, gui_released_state));
+                    gui_released));
 
             gui_clicked = false;
             gui_typed = false;
@@ -213,18 +210,24 @@ public class Recorder {
         Movie movie = new Movie();
         movie.location = location;
         movie.frames = recording;
-        ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
+
         try {
-            mapper.writeValue(file, movie);
+            movie.write(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        try {
-            mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentString("Saved to: " + file.getAbsolutePath()));
-        } catch (Exception exX) {
-            exX.printStackTrace();
-        }
+//        ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
+//        try {
+//            mapper.writeValue(file, movie);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentString("Saved to: " + file.getAbsolutePath()));
+//        } catch (Exception exX) {
+//            exX.printStackTrace();
+//        }
     }
 
     public void guiClicked(int mouseX, int mouseY, int mouseButton, Slot slotUnderMouse) {

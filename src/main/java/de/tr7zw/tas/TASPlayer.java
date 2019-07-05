@@ -27,6 +27,7 @@ public class TASPlayer implements PlaybackMethod {
     private Robot rob;
 
     public TASPlayer(List<KeyFrame> keyFrames) {
+        TAS.playing_back = true;
         this.keyFrames = keyFrames;
         try {
             this.rob = new Robot();
@@ -56,6 +57,7 @@ public class TASPlayer implements PlaybackMethod {
     public void updatePlayerMoveState() {                //When done playing, the game will pause...
         if (step >= keyFrames.size() - 1 || donePlaying) {
             if (!donePlaying) {
+                TAS.playing_back = false;
                 donePlaying = true;
                 mc.player.motionX = 0;
                 mc.player.motionY = 0;
@@ -92,35 +94,35 @@ public class TASPlayer implements PlaybackMethod {
             return;
         }
 
-//        if (frame.gui_clicked) {
-//            try {
-////                TASUtils.sendMessage(String.format("(%d, %d) %d", frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton));
-//                //moveMouse(frame.gui_mouseX, frame.gui_mouseY);
-//                //((TASGuiContainer) gui).callMouseClicked(frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton);
-//            } catch (IOException e) {
-//                TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (GUI threw an error when clicking)");
-//            }
-//        }
+        if (frame.gui_clicked) {
+            try {
+                TASUtils.sendMessage(String.format("(%d, %d) %d", frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton));
+                moveMouse(frame.gui_mouseX, frame.gui_mouseY);
+                ((TASGuiContainer) gui).callMouseClicked(frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton);
+            } catch (IOException e) {
+                TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (GUI threw an error when clicking)");
+            }
+        }
 
         if (frame.gui_typed) {
             try {
                 moveMouse(frame.gui_mouseX, frame.gui_mouseY);
                 ((TASGuiContainer) gui).callKeyPressed(frame.gui_typedChar, frame.gui_keyCode);
-//                TASUtils.sendMessage(String.format("%s %d", frame.gui_typedChar, frame.gui_keyCode));
+                TASUtils.sendMessage(String.format("%s %d", frame.gui_typedChar, frame.gui_keyCode));
             } catch (IOException e) {
                 TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (GUI threw an error when typing)");
             }
         }
 
         if (frame.gui_clickmoved) {
-            //moveMouse(frame.gui_mouseX, frame.gui_mouseY);
-            //((TASGuiContainer) gui).callMouseClickMoved(frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton, frame.gui_timeSinceLastClick);
+            moveMouse(frame.gui_mouseX, frame.gui_mouseY);
+            ((TASGuiContainer) gui).callMouseClickMoved(frame.gui_mouseX, frame.gui_mouseY, frame.gui_mouseButton, frame.gui_timeSinceLastClick);
         }
 
         if (frame.gui_released) {
             try {
-                //moveMouse(frame.gui_mouseX, frame.gui_mouseY);
-                //((TASGuiContainer) gui).callMouseReleased(frame.gui_mouseX, frame.gui_mouseY, frame.gui_released_state);
+                moveMouse(frame.gui_mouseX, frame.gui_mouseY);
+                ((TASGuiContainer) gui).callMouseReleased(frame.gui_mouseX, frame.gui_mouseY, 0);
             } catch (NullPointerException e) {
                 TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (Release NPE?)");
             }
@@ -130,13 +132,6 @@ public class TASPlayer implements PlaybackMethod {
 
         if (nextframe != null && (nextframe.gui_clicked || nextframe.gui_clickmoved || nextframe.gui_released || nextframe.gui_typed)) {
             moveMouse(nextframe.gui_mouseX, nextframe.gui_mouseY);
-            if (nextframe.gui_clicked) {
-                rob.mousePress(InputEvent.getMaskForButton(nextframe.gui_mouseButton+1));
-            }
-            if (nextframe.gui_released) {
-                rob.mouseRelease(InputEvent.getMaskForButton(nextframe.gui_mouseButton+1));
-            }
-
         }
     }
 

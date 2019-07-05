@@ -65,8 +65,6 @@ dependencies {
         exclude module: 'commons-io'
         exclude module: 'log4j-core'
     }
-    compile 'org.msgpack:msgpack-core:0.8.16'
-    compile 'org.msgpack:jackson-dataformat-msgpack:0.8.16'
 
     //you may put jars on which you depend on in ./libs
     // or you may define them like so..

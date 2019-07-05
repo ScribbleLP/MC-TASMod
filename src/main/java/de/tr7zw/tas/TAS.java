@@ -1,8 +1,7 @@
 package de.tr7zw.tas;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.tr7zw.tas.duck.TASGuiContainer;
 import de.tr7zw.tas.duck.PlaybackInput;
+import de.tr7zw.tas.duck.TASGuiContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -12,15 +11,16 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
 public class TAS {
-
+    public static boolean playing_back = false;
     public static Recorder recorder = null;
     public static TASPlayer tasPlayer = null;
     private static Minecraft mc = Minecraft.getMinecraft();
@@ -39,9 +39,8 @@ public class TAS {
 
     public static List<KeyFrame> loadData(File tasData) {
         loaded = true;
-        ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
         try {
-            return objectMapper.readValue(tasData, Movie.class).frames;
+            return Movie.read(tasData).frames;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -153,9 +152,9 @@ public class TAS {
                     "tasfiles" + File.separator + args[0] + ".tas");
             if (file.exists()) {
                 try {
-                    ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
-                    String[] Location = objectMapper.readValue(file, Movie.class).location.split("\\(|(, )|\\)");
-
+                    BufferedReader reader = new BufferedReader(new FileReader(file));
+                    String[] Location = reader.readLine().split("\\(|(, )|\\)");
+                    reader.close();
                     mc.player.sendChatMessage("/tp " + Location[1] + " " +
                             Location[2] + " " +
                             Location[3]);
