@@ -28,16 +28,13 @@ public class KeyFrame {
     public boolean gui_clickmoved;
     public long gui_timeSinceLastClick;
     public boolean gui_released;
-
-    @SuppressWarnings("unused")
-    public KeyFrame() {
-    } //So that jackson can unpack keyframes
+    public int gui_released_state;
 
     public KeyFrame(boolean forwardKeyDown, boolean backKeyDown, boolean leftKeyDown, boolean rightKeyDown,
                     boolean jump, boolean sneak, boolean sprint, boolean drop, boolean inventory, float pitch, float yaw,
                     boolean leftClick, boolean rightClick, int slot, int mousex, int mousey,
                     int gui_slotUnderMouse, boolean gui_clicked, int gui_mouseX, int gui_mouseY, int gui_mouseButton,
-                    boolean gui_typed, char gui_typedChar, int gui_keyCode, boolean gui_clickmoved, long gui_timeSinceLastClick, boolean gui_released) {
+                    boolean gui_typed, char gui_typedChar, int gui_keyCode, boolean gui_clickmoved, long gui_timeSinceLastClick, boolean gui_released, int gui_released_state) {
         super();
         this.forwardKeyDown = forwardKeyDown;
         this.backKeyDown = backKeyDown;
@@ -70,6 +67,7 @@ public class KeyFrame {
         this.gui_timeSinceLastClick = gui_timeSinceLastClick;
         this.gui_released = gui_released;
         this.inventory = inventory;
+        this.gui_released_state = gui_released_state;
     }
 
     public static KeyFrame unpack(String packed) {
@@ -102,7 +100,8 @@ public class KeyFrame {
                 Integer.parseInt(split[24]),
                 split[15].equals("gCM"),
                 Long.parseLong(split[25]),
-                split[17].equals("gR")
+                split[17].equals("gR"),
+                Integer.parseInt(split[26])
         );
     }
 
@@ -136,7 +135,8 @@ public class KeyFrame {
                 Integer.toString(gui_mouseY), //22
                 Integer.toString(gui_mouseButton), //23
                 Integer.toString(gui_keyCode), //24
-                Long.toString(gui_timeSinceLastClick) //25
+                Long.toString(gui_timeSinceLastClick), //25
+                Integer.toString(gui_released_state) // 26
         );
 
         return join;

@@ -122,7 +122,7 @@ public class TASPlayer implements PlaybackMethod {
         if (frame.gui_released) {
             try {
                 moveMouse(frame.gui_mouseX, frame.gui_mouseY);
-                ((TASGuiContainer) gui).callMouseReleased(frame.gui_mouseX, frame.gui_mouseY, 0);
+                ((TASGuiContainer) gui).callMouseReleased(frame.gui_mouseX, frame.gui_mouseY, frame.gui_released_state);
             } catch (NullPointerException e) {
                 TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (Release NPE?)");
             }

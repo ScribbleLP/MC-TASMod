@@ -154,7 +154,7 @@ public class Recorder {
                     gui_slotUnderMouse, gui_clicked, gui_mouseX, gui_mouseY, gui_mouseButton,
                     gui_typed, gui_typedChar, gui_keyCode,
                     gui_clickmoved, gui_timeSinceLastClick,
-                    gui_released));
+                    gui_released, gui_released_state));
 
             gui_clicked = false;
             gui_typed = false;
