@@ -1,0 +1,10 @@
+{
+  "package": "de.tr7zw.tas.mixin",
+  "refmap": "mixins.tas.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinGuiContainer",
+    "MixinMinecraft"
+  ],
+  "verbose": true
+}
