@@ -50,6 +50,7 @@ public class MixinMinecraft implements PlaybackInput {
         this.playback = newPlayback;
     }
 
+    @Override
     public void setRecorder(Recorder recorder) {
         this.recorder = recorder;
     }

@@ -3,7 +3,6 @@
   "refmap": "mixins.tas.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMovementInputFromOptions",
     "MixinGuiContainer",
     "MixinMinecraft"
   ],

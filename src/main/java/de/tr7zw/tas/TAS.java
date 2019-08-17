@@ -110,6 +110,7 @@ public class TAS {
         recorder = new Recorder();
         recorder.donerecording = false;
         recorder.recordstep = 0;
+        ((PlaybackInput) mc).setRecorder(recorder);
         MinecraftForge.EVENT_BUS.register(recorder);
     }
 
