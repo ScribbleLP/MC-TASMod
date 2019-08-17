@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Recorder {
 
@@ -58,20 +59,15 @@ public class Recorder {
      * If it's true, rightclick was pressed.
      */
     private boolean rkchecker = false;
-    private boolean leftclack = false;
-    private boolean rightclack = false;
-    private boolean gui_clicked;
     private int gui_mouseX;
     private int gui_mouseY;
     private int gui_mouseButton;
     private int gui_slotUnderMouse;
-    private boolean gui_typed;
     private char gui_typedChar;
     private int gui_keyCode;
-    private boolean gui_clickmoved;
     private long gui_timeSinceLastClick;
-    private boolean gui_released;
     private int gui_released_state;
+    private List<GuiFrame> gui_events = new ArrayList<>();
 
 
     public Recorder() {
@@ -105,12 +101,11 @@ public class Recorder {
     /**
      * Testmethod to let certain inputs record at the end of the tick
      */
-    @SubscribeEvent
-    public void onClientTickSTART(TickEvent.ClientTickEvent ev) {
-        if (ev.phase == Phase.END && !donerecording) {
+    public void onProcessKeybinds() {
+        if (!donerecording) {
             GameSettings gameset = mc.gameSettings;
-            leftclack = false;
-            rightclack = false;
+            boolean leftclack = false;
+            boolean rightclack = false;
             //Printing the correct string for leftclick from onMouseClick
             if (clicklefty == 2) {                        //Scenario for clicking and releasing within a tick
                 leftclack = true;
@@ -122,7 +117,6 @@ public class Recorder {
                 leftclack = true;
                 needsunpressLK = true;
             } else if (needsunpressLK) {                //Scenario when a button was held or pressed and now it's unpressed.
-                leftclack = true;
                 needsunpressLK = false;
             }
 
@@ -137,7 +131,6 @@ public class Recorder {
                 rightclack = true;
                 needsunpressRK = true;
             } else if (needsunpressRK) {
-                rightclack = false;
                 needsunpressRK = false;
             }
             tickpitch = mc.player.rotationPitch;
@@ -150,16 +143,10 @@ public class Recorder {
                     gameset.keyBindDrop.isKeyDown(), gameset.keyBindInventory.isKeyDown(), tickpitch, tickyaw,
                     leftclack, rightclack,
                     mc.player.inventory.currentItem,
-                    MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y,
-                    gui_slotUnderMouse, gui_clicked, gui_mouseX, gui_mouseY, gui_mouseButton,
-                    gui_typed, gui_typedChar, gui_keyCode,
-                    gui_clickmoved, gui_timeSinceLastClick,
-                    gui_released, gui_released_state));
+                    MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, gui_events));
+            gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_DUMMY, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
 
-            gui_clicked = false;
-            gui_typed = false;
-            gui_clickmoved = false;
-            gui_released = false;
+            gui_events = new ArrayList<>();
 
             /*Check if leftclick was pressed and not released
              * if it was pressed and immediately released in one tick, clicklefty would equal 2 and thus lkchecker would be false*/
@@ -231,32 +218,32 @@ public class Recorder {
     }
 
     public void guiClicked(int mouseX, int mouseY, int mouseButton, Slot slotUnderMouse) {
-        gui_clicked = true;
         gui_mouseX = mouseX;
         gui_mouseY = mouseY;
         gui_mouseButton = mouseButton;
         gui_slotUnderMouse = -1 ;
+        gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_CLICKED, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
     }
 
     public void guiTyped(char typedChar, int keyCode, Slot slotUnderMouse) {
-        gui_typed = true;
         gui_typedChar = typedChar;
         gui_keyCode = keyCode;
         gui_slotUnderMouse = -1;
+        gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_TYPED, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
     }
 
     public void guiClickMoved(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        gui_clickmoved = true;
         gui_mouseX = mouseX;
         gui_mouseY = mouseY;
         gui_mouseButton = clickedMouseButton;
         gui_timeSinceLastClick = timeSinceLastClick;
+        gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_MOUSE_DRAGGED, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
     }
 
     public void guiReleased(int mouseX, int mouseY, int state) {
-        gui_released = true;
         gui_mouseX = mouseX;
         gui_mouseY = mouseY;
         gui_released_state = state;
+        gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_RELEASED, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
     }
 }
