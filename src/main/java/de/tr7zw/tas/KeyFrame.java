@@ -1,6 +1,9 @@
 package de.tr7zw.tas;
 
+import java.util.List;
+
 public class KeyFrame {
+    public List<GuiFrame> gui_states;
     public boolean inventory;
     public boolean forwardKeyDown;        //Where all the Keys are saved!
     public boolean backKeyDown;
@@ -17,24 +20,11 @@ public class KeyFrame {
     public int mouseX;
     public int mouseY;
     public int slot;
-    public boolean gui_clicked;
-    public int gui_mouseX;
-    public int gui_mouseY;
-    public int gui_mouseButton;
-    public int gui_slotUnderMouse;
-    public boolean gui_typed;
-    public char gui_typedChar;
-    public int gui_keyCode;
-    public boolean gui_clickmoved;
-    public long gui_timeSinceLastClick;
-    public boolean gui_released;
-    public int gui_released_state;
+
 
     public KeyFrame(boolean forwardKeyDown, boolean backKeyDown, boolean leftKeyDown, boolean rightKeyDown,
                     boolean jump, boolean sneak, boolean sprint, boolean drop, boolean inventory, float pitch, float yaw,
-                    boolean leftClick, boolean rightClick, int slot, int mousex, int mousey,
-                    int gui_slotUnderMouse, boolean gui_clicked, int gui_mouseX, int gui_mouseY, int gui_mouseButton,
-                    boolean gui_typed, char gui_typedChar, int gui_keyCode, boolean gui_clickmoved, long gui_timeSinceLastClick, boolean gui_released, int gui_released_state) {
+                    boolean leftClick, boolean rightClick, int slot, int mousex, int mousey, List<GuiFrame> gui_states) {
         super();
         this.forwardKeyDown = forwardKeyDown;
         this.backKeyDown = backKeyDown;
@@ -55,19 +45,9 @@ public class KeyFrame {
         this.rightClick = rightClick;
         this.sprint = sprint;
         this.slot = slot;
-        this.gui_clicked = gui_clicked;
-        this.gui_mouseX = gui_mouseX;
-        this.gui_mouseY = gui_mouseY;
-        this.gui_mouseButton = gui_mouseButton;
-        this.gui_slotUnderMouse = gui_slotUnderMouse;
-        this.gui_typed = gui_typed;
-        this.gui_typedChar = gui_typedChar;
-        this.gui_keyCode = gui_keyCode;
-        this.gui_clickmoved = gui_clickmoved;
-        this.gui_timeSinceLastClick = gui_timeSinceLastClick;
-        this.gui_released = gui_released;
+        this.gui_states = gui_states;
         this.inventory = inventory;
-        this.gui_released_state = gui_released_state;
+
     }
 
     public static KeyFrame unpack(String packed) {
@@ -88,25 +68,13 @@ public class KeyFrame {
                 split[7].equals("LK"),
                 split[8].equals("RK"),
                 Integer.parseInt(split[11]),
-                Integer.parseInt(split[19]),
-                Integer.parseInt(split[20]),
-                0,
-                split[14].equals("gC"),
-                Integer.parseInt(split[21]),
-                Integer.parseInt(split[22]),
-                Integer.parseInt(split[23]),
-                split[16].equals("gT"),
-                split[18].charAt(0),
-                Integer.parseInt(split[24]),
-                split[15].equals("gCM"),
-                Long.parseLong(split[25]),
-                split[17].equals("gR"),
-                Integer.parseInt(split[26])
+                Integer.parseInt(split[14]),
+                Integer.parseInt(split[15]),
+                GuiFrame.unpackList(split[16])
         );
     }
 
     public String pack() {
-        StringBuilder builder = new StringBuilder();
         // W,S,A,D,Space,Shift,Q,LK,RK,Ctrl,E,Pitch,Yaw,Slot,guiEvents
 
         String join = String.join(",",
@@ -124,19 +92,9 @@ public class KeyFrame {
                 Integer.toString(slot), //11
                 Float.toString(pitch), //12
                 Float.toString(yaw), //13
-                gui_clicked ? "gC" : " ", //14
-                gui_clickmoved ? "gCM" : " ", //15
-                gui_typed ? "gT" : " ", //16
-                gui_released ? "gR" : " ", //17
-                Character.toString(gui_typedChar), //18
-                Integer.toString(mouseX), //19
-                Integer.toString(mouseY), //20
-                Integer.toString(gui_mouseX), //21
-                Integer.toString(gui_mouseY), //22
-                Integer.toString(gui_mouseButton), //23
-                Integer.toString(gui_keyCode), //24
-                Long.toString(gui_timeSinceLastClick), //25
-                Integer.toString(gui_released_state) // 26
+                Integer.toString(mouseX), //14
+                Integer.toString(mouseY), //15
+                GuiFrame.packList(this.gui_states)//16
         );
 
         return join;

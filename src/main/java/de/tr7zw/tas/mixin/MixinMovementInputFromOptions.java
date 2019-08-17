@@ -12,14 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MovementInputFromOptions.class)
 public class MixinMovementInputFromOptions extends MovementInput implements PlaybackInput {
     private PlaybackMethod playback = null;
-
-    @Inject(method = "updatePlayerMoveState", at = @At("HEAD"))
-    protected void onUpdatePlayerMoveState(CallbackInfo ci) {
-        if (playback != null) {
-            playback.updatePlayerMoveState();
-        }
-    }
-
+    
     @Override
     public PlaybackMethod getPlayback() {
         return playback;

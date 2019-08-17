@@ -69,7 +69,7 @@ public class TAS {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent ev) {
-        if (ev.phase == Phase.START && mc.player != null && ((PlaybackInput) mc.player.movementInput).getPlayback() instanceof TASPlayer) {
+        if (ev.phase == Phase.START && ((PlaybackInput) mc).getPlayback() instanceof TASPlayer) {
             if (donePlaying()) {
                 clearData();
             }
@@ -88,7 +88,7 @@ public class TAS {
         }
 
         if (!donePlaying() && (ev.getGui() == null || ev.getGui() instanceof GuiContainer)) {
-            tasPlayer.gui = (GuiContainer) ev.getGui();
+            tasPlayer.gui = ev.getGui();
         }
     }
 
@@ -142,7 +142,7 @@ public class TAS {
         mc.player.motionY = 0;
         mc.player.motionZ = 0;
         tasPlayer = new TASPlayer(loadData(file));
-        ((PlaybackInput) mc.player.movementInput).setPlayback(tasPlayer);
+        ((PlaybackInput) mc).setPlayback(tasPlayer);
         sendMessage("Loaded File");
     }
 
