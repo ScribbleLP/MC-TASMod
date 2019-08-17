@@ -1,6 +1,8 @@
 package de.tr7zw.tas;
 
 import de.tr7zw.tas.commands.*;
+import de.tr7zw.tas.networking.TeleportMessage;
+import de.tr7zw.tas.networking.TeleportMessageHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -10,21 +12,30 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
+
+import org.apache.logging.log4j.Logger;
 
 
 @Mod(modid = "tasmod", name = "Tool Asisted Speedrun Mod")
 
 public class TASModLoader {
+	public static Logger LOGGER;
 
 
     @Instance
     public static TASModLoader instance = new TASModLoader();
 
+    
+    public static SimpleNetworkWrapper NETWORK;
+    
     @EventHandler
-
     public void preInit(FMLPreInitializationEvent event) {
+    	LOGGER=event.getModLog();
         //Config File
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
@@ -33,6 +44,10 @@ public class TASModLoader {
         TASEvents.StopRecOnWorldClose = config.get("General", "StopRecordOnCloseWorld", true, "While true, the running recording (with /record) will be saved when closing the world with save and quit").getBoolean();
         TASEvents.FallDamage = config.get("General", "Falldamage", true, "While true, fall damage is enabled on world startup").getBoolean();
         config.save();
+        
+        //Networking
+        NETWORK= NetworkRegistry.INSTANCE.newSimpleChannel("tasmod");
+        NETWORK.registerMessage(TeleportMessageHandler.class, TeleportMessage.class, 0, Side.SERVER);
     }
 
     @EventHandler
@@ -40,7 +55,6 @@ public class TASModLoader {
         MinecraftForge.EVENT_BUS.register(new TASEvents());
         MinecraftForge.EVENT_BUS.register(TAS.class);
         new File(Minecraft.getMinecraft().mcDataDir, "saves" + File.separator + "tasfiles").mkdir();
-
     }
 
     @EventHandler
