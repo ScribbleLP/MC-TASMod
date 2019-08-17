@@ -2,11 +2,13 @@ package de.tr7zw.tas;
 
 import de.tr7zw.tas.duck.PlaybackInput;
 import de.tr7zw.tas.duck.TASGuiContainer;
+import de.tr7zw.tas.networking.TeleportMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -77,7 +79,7 @@ public class TAS {
     }
 
     @SubscribeEvent()
-    public static void onMenu(net.minecraftforge.client.event.GuiOpenEvent ev) {
+    public static void onMenu(GuiOpenEvent ev) {
         System.out.printf("Gui Opened %s%n", ev.getGui());
         if (ev.getGui() instanceof GuiMainMenu) {
             System.out.println("Main menu, clearing data");
@@ -156,9 +158,7 @@ public class TAS {
                     BufferedReader reader = new BufferedReader(new FileReader(file));
                     String[] Location = reader.readLine().split("\\(|(, )|\\)");
                     reader.close();
-                    mc.player.sendChatMessage("/tp " + Location[1] + " " +
-                            Location[2] + " " +
-                            Location[3]);
+                    TASModLoader.NETWORK.sendToServer(new TeleportMessage(Double.parseDouble(Location[1]), Double.parseDouble(Location[2]), Double.parseDouble(Location[3])));
                     sendMessage("Teleporting...");
                 } catch (Exception ex) {
                     ex.printStackTrace();
