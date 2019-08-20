@@ -152,9 +152,10 @@ public class TASPlayer implements PlaybackMethod {
         mc.gameSettings.keyBindSneak.pressed = frame.sneak;
         mc.gameSettings.keyBindSprint.pressed = frame.sprint;
         mc.gameSettings.keyBindInventory.pressed = frame.inventory; //Read Sprint Key from File
+        if (mc.gameSettings.keyBindInventory.pressed) {
+            mc.gameSettings.keyBindInventory.pressTime = -1;
+        }
         mc.player.inventory.currentItem = frame.slot;                    //Read Inventory Slot from File etc...
-        mc.player.prevRotationYaw = mc.player.rotationYaw;
-        mc.player.prevRotationPitch = mc.player.rotationPitch;
         mc.player.rotationPitch = frame.pitch;
         mc.player.rotationYaw = uncalc(frame.yaw);
     }

@@ -123,6 +123,7 @@ public class TAS {
         }
         sendMessage("Stopped the tas recording!");
         MinecraftForge.EVENT_BUS.unregister(recorder);
+        ((PlaybackInput) mc).setRecorder(null);
 
         if (genname) {
             File file = new File(Minecraft.getMinecraft().mcDataDir, "saves" + File.separator +

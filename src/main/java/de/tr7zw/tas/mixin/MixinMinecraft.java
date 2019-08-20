@@ -27,7 +27,7 @@ public class MixinMinecraft implements PlaybackInput {
         }
     }
 
-    @Inject(method = "processKeyBinds", at = @At("HEAD"))
+    @Inject(method = "runTick", at = @At("HEAD"))
     private void onProcessKeyBinds(CallbackInfo ci) {
 //        if (TAS.playing_back) {
 //            TASPlayer.keyBindsHook();
