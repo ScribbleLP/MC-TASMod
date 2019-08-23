@@ -59,15 +59,18 @@ public class TASPlayer implements PlaybackMethod {
 
     @Override
     public void updatePlayerMoveState() {                //When done playing, the game will pause...
-        if (step >= keyFrames.size() - 1 || donePlaying) {
+        if (step >= keyFrames.size() - 1) {
             if (!donePlaying) {
                 TAS.playing_back = false;
                 donePlaying = true;
-                mc.player.motionX = 0;
-                mc.player.motionY = 0;
-                mc.player.motionZ = 0;
-                Minecraft.getMinecraft().displayGuiScreen(new GuiScreen() {
-                });
+                if(!breaking) {
+	                mc.player.motionX = 0;
+	                mc.player.motionY = 0;
+	                mc.player.motionZ = 0;
+	                mc.player.velocityChanged=true;
+	                Minecraft.getMinecraft().displayGuiScreen(new GuiScreen() {
+	                });
+                }
                 ((PlaybackInput) mc).setPlayback(null);
                 return;
             }

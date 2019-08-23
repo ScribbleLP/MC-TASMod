@@ -190,7 +190,6 @@ public class TAS {
     public static void stopPlaying() {
         if (!donePlaying()) {
             tasPlayer.breaking = true;
-            tasPlayer.donePlaying = true;
             tasPlayer = null;
         }
     }
