@@ -7,6 +7,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.gui.spectator.ISpectatorMenuRecipient;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -24,6 +29,8 @@ public class TASPlayer implements PlaybackMethod {
     private static int calcstate = 0;
     private Robot rob;
     private boolean openedInventory;
+    private static int presstimeLK=0;
+    private static int presstimeRK=0;
     public static KeyFrame pFrame;
 
     public TASPlayer(List<KeyFrame> keyFrames) {
@@ -70,6 +77,8 @@ public class TASPlayer implements PlaybackMethod {
 	                mc.player.velocityChanged=true;
 	                Minecraft.getMinecraft().displayGuiScreen(new GuiScreen() {
 	                });
+                }else{
+                	unpressAllKeys();
                 }
                 ((PlaybackInput) mc).setPlayback(null);
                 return;
@@ -101,16 +110,16 @@ public class TASPlayer implements PlaybackMethod {
                             moveMouse(guiFrame.gui_mouseX, guiFrame.gui_mouseY);
                             ((TASGuiContainer) gui).callMouseReleased(guiFrame.gui_mouseX, guiFrame.gui_mouseY, guiFrame.gui_released_state);
                         } catch (NullPointerException e) {
-                            TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (Release NPE?)");
+                        	TASModLoader.LOGGER.info("Probably desyncing (Release NPE?)");
                         }
                         break;
                     case GUI_CLICKED:
                         try {
-                            TASUtils.sendMessage(String.format("(%d, %d) %d", guiFrame.gui_mouseX, guiFrame.gui_mouseY, guiFrame.gui_mouseButton));
+                            TASModLoader.LOGGER.info("("+guiFrame.gui_mouseX+", "+guiFrame.gui_mouseY+") "+guiFrame.gui_mouseButton);
                             moveMouse(guiFrame.gui_mouseX, guiFrame.gui_mouseY);
                             ((TASGuiContainer) gui).callMouseClicked(guiFrame.gui_mouseX, guiFrame.gui_mouseY, guiFrame.gui_mouseButton);
                         } catch (IOException e) {
-                            TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (GUI threw an error when clicking)");
+                        	TASModLoader.LOGGER.info("Probably desyncing (GUI threw an error when clicking)");
                         }
                         break;
                     case GUI_MOUSE_DRAGGED:
@@ -121,9 +130,9 @@ public class TASPlayer implements PlaybackMethod {
                         try {
                             moveMouse(guiFrame.gui_mouseX, guiFrame.gui_mouseY);
                             ((TASGuiContainer) gui).callKeyPressed(guiFrame.gui_typedChar, guiFrame.gui_keyCode);
-                            TASUtils.sendMessage(String.format("%s %d", guiFrame.gui_typedChar, guiFrame.gui_keyCode));
+                            TASModLoader.LOGGER.info(guiFrame.gui_typedChar+" "+guiFrame.gui_keyCode);
                         } catch (IOException e) {
-                            TASUtils.sendMessage(ChatFormatting.YELLOW + "Probably desyncing (GUI threw an error when typing)");
+                        	TASModLoader.LOGGER.info("Probably desyncing (GUI threw an error when typing)");
                         }
                         break;
                 }
@@ -145,8 +154,8 @@ public class TASPlayer implements PlaybackMethod {
     }
 
     private static void updateKeybinds(KeyFrame frame) {
-        mc.gameSettings.keyBindAttack.pressed = frame.leftClick;
-        mc.gameSettings.keyBindUseItem.pressed = frame.rightClick;
+    	updateLK(frame.leftClick, mc.gameSettings.keyBindAttack);
+        updateRK(frame.rightClick, mc.gameSettings.keyBindUseItem);
         mc.gameSettings.keyBindForward.pressed = frame.forwardKeyDown;
         mc.gameSettings.keyBindBack.pressed = frame.backKeyDown;
         mc.gameSettings.keyBindLeft.pressed = frame.leftKeyDown;
@@ -172,5 +181,43 @@ public class TASPlayer implements PlaybackMethod {
         int newX = (mc.displayWidth * x) / i1;
         int newY = (mc.displayHeight * (j1 - y - 1)) / j1;
         Mouse.setCursorPosition(newX, newY);
+    }
+    
+    private static void updateLK(boolean pressed, KeyBinding keybind) {
+    	mc.gameSettings.keyBindAttack.pressed = pressed;
+    	if(pressed) {
+    		presstimeLK++;
+    	}else {
+    		presstimeLK=0;
+    	}
+    	setPressed(keybind, presstimeLK);
+    }
+    
+    private static void updateRK(boolean pressed, KeyBinding keybind) {
+    	mc.gameSettings.keyBindUseItem.pressed = pressed;
+    	if(pressed) {
+    		presstimeRK++;
+    	}else {
+    		presstimeRK=0;
+    	}
+    	setPressed(keybind, presstimeRK);
+    }
+    
+    private static void setPressed(KeyBinding keybind, int presstime) {
+    	if(presstime==1) {
+    		keybind.pressTime=1;
+    	}
+    }
+    
+    public void unpressAllKeys() {
+    	mc.gameSettings.keyBindAttack.pressed = false;
+    	 mc.gameSettings.keyBindForward.pressed = false;
+         mc.gameSettings.keyBindBack.pressed = false;
+         mc.gameSettings.keyBindLeft.pressed = false;
+         mc.gameSettings.keyBindRight.pressed = false;
+         mc.gameSettings.keyBindJump.pressed = false;
+         mc.gameSettings.keyBindSneak.pressed = false;
+         mc.gameSettings.keyBindSprint.pressed = false;
+         mc.gameSettings.keyBindInventory.pressed = false;
     }
 }

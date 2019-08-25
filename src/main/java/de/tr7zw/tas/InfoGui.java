@@ -59,11 +59,11 @@ public class InfoGui extends Gui {
         if (mc.gameSettings.keyBindForward.isKeyDown()) {
             new Gui().drawString(mc.fontRenderer, "W", 3, height - 13, 0xFFFFFF);
         }
-        if (mc.gameSettings.keyBindBack.isKeyDown()) {
-            new Gui().drawString(mc.fontRenderer, "S", 11, height - 13, 0xFFFFFF);
-        }
         if (mc.gameSettings.keyBindLeft.isKeyDown()) {
-            new Gui().drawString(mc.fontRenderer, "A", 19, height - 13, 0xFFFFFF);
+            new Gui().drawString(mc.fontRenderer, "A", 11, height - 13, 0xFFFFFF);
+        }
+        if (mc.gameSettings.keyBindBack.isKeyDown()) {
+            new Gui().drawString(mc.fontRenderer, "S", 19, height - 13, 0xFFFFFF);
         }
         if (mc.gameSettings.keyBindRight.isKeyDown()) {
             new Gui().drawString(mc.fontRenderer, "D", 27, height - 13, 0xFFFFFF);
@@ -78,7 +78,7 @@ public class InfoGui extends Gui {
             new Gui().drawString(mc.fontRenderer, "Ctrl", 92, height - 13, 0xFFFFFF);
         }
         if (mc.gameSettings.keyBindAttack.isKeyDown()) {
-            new Gui().drawString(mc.fontRenderer, "LK", 112, height - 13, 0xFFFFFF);
+            new Gui().drawString(mc.fontRenderer, "LK", 113, height - 13, 0xFFFFFF);
         }
         if (mc.gameSettings.keyBindUseItem.isKeyDown()) {
             new Gui().drawString(mc.fontRenderer, "RK", 127, height - 13, 0xFFFFFF);

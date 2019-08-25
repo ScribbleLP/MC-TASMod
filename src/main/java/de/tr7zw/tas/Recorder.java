@@ -138,12 +138,18 @@ public class Recorder {
 
 
             //Recording the movement
-            recording.add(new KeyFrame(gameset.keyBindForward.isKeyDown(), gameset.keyBindBack.isKeyDown(), gameset.keyBindLeft.isKeyDown(), gameset.keyBindRight.isKeyDown(),
-                    gameset.keyBindJump.isKeyDown(), gameset.keyBindSneak.isKeyDown(), gameset.keyBindSprint.isKeyDown(),
-                    gameset.keyBindDrop.isKeyDown(), gameset.keyBindInventory.isKeyDown(), tickpitch, tickyaw,
-                    leftclack, rightclack,
-                    mc.player.inventory.currentItem,
-                    MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, gui_events));
+            recording.add(new KeyFrame(gameset.keyBindForward.isKeyDown(), gameset.keyBindLeft.isKeyDown(), gameset.keyBindBack.isKeyDown(), gameset.keyBindRight.isKeyDown(),	//Movement Keys
+            		
+            		gameset.keyBindJump.isKeyDown(), gameset.keyBindSneak.isKeyDown(), gameset.keyBindSprint.isKeyDown(),	//Modifying Movement Keys
+                    
+            		leftclack, rightclack,	//Mouse Buttons
+                    
+            		gameset.keyBindDrop.isKeyDown(), gameset.keyBindInventory.isKeyDown(), mc.player.inventory.currentItem,	//Inventory Related Keys
+                    
+            		tickpitch, tickyaw,	//Head Rotation
+                    
+            		MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y, gui_events));	//Gui
+            
             gui_events.add(new GuiFrame(GuiFrame.FrameType.GUI_DUMMY, gui_mouseX, gui_mouseY, gui_mouseButton, gui_slotUnderMouse, gui_typedChar, gui_keyCode, gui_timeSinceLastClick, gui_released_state));
 
             gui_events = new ArrayList<>();
@@ -168,7 +174,7 @@ public class Recorder {
      * Method to check if Mousebuttons are pressed or held.
      */
     @SubscribeEvent
-    public void onMouseClick(TickEvent.RenderTickEvent ev) {        //Complicated method to check if the mousebuttons are pressed or held... This bit was located in TASEvents once and I decided to move it here...
+    public void onMouseClick(TickEvent.RenderTickEvent ev) {
         if (!donerecording && ev.phase == Phase.START) {
             if (GameSettings.isKeyDown(mc.gameSettings.keyBindAttack)) {
                 //set to pressed

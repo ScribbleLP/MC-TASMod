@@ -22,32 +22,27 @@ public class KeyFrame {
     public int slot;
 
 
-    public KeyFrame(boolean forwardKeyDown, boolean backKeyDown, boolean leftKeyDown, boolean rightKeyDown,
-                    boolean jump, boolean sneak, boolean sprint, boolean drop, boolean inventory, float pitch, float yaw,
-                    boolean leftClick, boolean rightClick, int slot, int mousex, int mousey, List<GuiFrame> gui_states) {
+    public KeyFrame(boolean forwardKeyDown, boolean leftKeyDown, boolean backKeyDown, boolean rightKeyDown,
+                    boolean jump, boolean sneak, boolean sprint, boolean leftClick, boolean rightClick, boolean drop, boolean inventory,int slot, float pitch, float yaw,
+                    int mousex, int mousey, List<GuiFrame> gui_states) {
         super();
         this.forwardKeyDown = forwardKeyDown;
-        this.backKeyDown = backKeyDown;
         this.leftKeyDown = leftKeyDown;
+        this.backKeyDown = backKeyDown;
         this.rightKeyDown = rightKeyDown;
         this.jump = jump;
         this.sneak = sneak;
-        this.pitch = pitch;
-        this.yaw = yaw;
-        this.drop = drop;
-        this.mouseX = mousex;
-        this.mouseY = mousey;
-        //if(this.pitch > 90)this.pitch = 90;
-        //if(this.pitch < -90)this.pitch = -90;
-        //if(this.yaw > 180)this.yaw = 180;
-        //if(this.yaw < -180)this.yaw = -180;
+        this.sprint = sprint;
         this.leftClick = leftClick;
         this.rightClick = rightClick;
-        this.sprint = sprint;
-        this.slot = slot;
-        this.gui_states = gui_states;
+        this.drop = drop;
         this.inventory = inventory;
-
+        this.slot = slot;
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.mouseX = mousex;
+        this.mouseY = mousey;
+        this.gui_states = gui_states;
     }
 
     public static KeyFrame unpack(String packed) {
@@ -55,19 +50,19 @@ public class KeyFrame {
 
         return new KeyFrame(
                 split[0].equals("W"),
-                split[1].equals("S"),
-                split[2].equals("A"),
+                split[1].equals("A"),
+                split[2].equals("S"),
                 split[3].equals("D"),
                 split[4].equals("Space"),
                 split[5].equals("Shift"),
-                split[9].equals("Ctrl"),
-                split[6].equals("Q"),
-                split[10].equals("E"),
-                Float.parseFloat(split[12]),
-                Float.parseFloat(split[13]),
+                split[6].equals("Ctrl"),
                 split[7].equals("LK"),
                 split[8].equals("RK"),
+                split[6].equals("Q"),
+                split[10].equals("E"),
                 Integer.parseInt(split[11]),
+                Float.parseFloat(split[12]),
+                Float.parseFloat(split[13]),
                 Integer.parseInt(split[14]),
                 Integer.parseInt(split[15]),
                 GuiFrame.unpackList(split[16])
@@ -75,19 +70,19 @@ public class KeyFrame {
     }
 
     public String pack() {
-        // W,S,A,D,Space,Shift,Q,LK,RK,Ctrl,E,Pitch,Yaw,Slot,guiEvents
+        // W,A,S,D,Space,Shift,Ctrl,LK,RK,Q,E,Slot,Pitch,Yaw,guiEvents
 
         String join = String.join(",",
                 forwardKeyDown ? "W" : " ", //0
-                backKeyDown ? "S" : " ", //1
-                leftKeyDown ? "A" : " ", //2
+                leftKeyDown ? "A" : " ", //1
+                backKeyDown ? "S" : " ", //2
                 rightKeyDown ? "D" : " ", //3
                 jump ? "Space" : " ", //4
                 sneak ? "Shift" : " ", //5
-                drop ? "Q" : " ", //6
+                sprint ? "Ctrl" : " ", //6
                 leftClick ? "LK" : " ", //7
                 rightClick ? "RK" : " ", //8
-                sprint ? "Ctrl" : " ", //9
+                drop ? "Q" : " ", //9
                 inventory ? "E" : " ", //10
                 Integer.toString(slot), //11
                 Float.toString(pitch), //12

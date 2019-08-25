@@ -82,7 +82,7 @@ public class TAS {
     public static void onMenu(GuiOpenEvent ev) {
         System.out.printf("Gui Opened %s%n", ev.getGui());
         if (ev.getGui() instanceof GuiMainMenu) {
-            System.out.println("Main menu, clearing data");
+            TASModLoader.LOGGER.info("Main menu, clearing data");
             clearData();
         } else if (ev.getGui() instanceof GuiContainer) {
             System.out.printf("Gui Container, giving it recorder %s%n", recorder);
