@@ -1,11 +1,14 @@
 package de.tr7zw.tas.commands;
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.mojang.realmsclient.gui.ChatFormatting;
-import de.tr7zw.tas.Recorder;
+
 import de.tr7zw.tas.TAS;
-import de.tr7zw.tas.TASPlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -14,10 +17,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TasTpc extends CommandBase {
 

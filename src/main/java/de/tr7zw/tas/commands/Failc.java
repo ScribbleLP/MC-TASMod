@@ -1,7 +1,9 @@
 package de.tr7zw.tas.commands;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
-import de.tr7zw.tas.Recorder;
+
 import de.tr7zw.tas.TAS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
@@ -11,8 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-
-import java.util.List;
 
 public class Failc extends CommandBase {
 

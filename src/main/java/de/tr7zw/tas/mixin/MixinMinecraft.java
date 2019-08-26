@@ -1,15 +1,15 @@
 package de.tr7zw.tas.mixin;
 
-import de.tr7zw.tas.PlaybackMethod;
-import de.tr7zw.tas.Recorder;
-import de.tr7zw.tas.TAS;
-import de.tr7zw.tas.TASPlayer;
-import de.tr7zw.tas.duck.PlaybackInput;
-import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import de.tr7zw.tas.PlaybackMethod;
+import de.tr7zw.tas.Recorder;
+import de.tr7zw.tas.TAS;
+import de.tr7zw.tas.duck.PlaybackInput;
+import net.minecraft.client.Minecraft;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraft implements PlaybackInput {

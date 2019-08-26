@@ -1,22 +1,19 @@
 package de.tr7zw.tas;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.io.IOException;
+import java.util.List;
+
+import org.lwjgl.input.Mouse;
+
 import de.tr7zw.tas.duck.PlaybackInput;
 import de.tr7zw.tas.duck.TASGuiContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.gui.spectator.ISpectatorMenuRecipient;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import org.lwjgl.input.Mouse;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
 
 public class TASPlayer implements PlaybackMethod {
 
@@ -183,30 +180,32 @@ public class TASPlayer implements PlaybackMethod {
         Mouse.setCursorPosition(newX, newY);
     }
     
-    private static void updateLK(boolean pressed, KeyBinding keybind) {
-    	mc.gameSettings.keyBindAttack.pressed = pressed;
-    	if(pressed) {
-    		presstimeLK++;
-    	}else {
-    		presstimeLK=0;
+    private static void updateLK(String pressed, KeyBinding keybind) {
+    	mc.gameSettings.keyBindAttack.pressed = (pressed.equals("pLK")||pressed.equals("hLK"));
+    	if(pressed.startsWith("pLK")) {
+    		if(pressed.startsWith("pLK[")) {
+    			String[] split = pressed.split("(\\[|\\])");
+    			setPressed(keybind, Integer.parseInt(split[1]));
+    			return;
+    		}
+    		setPressed(keybind, 1);
     	}
-    	setPressed(keybind, presstimeLK);
     }
     
-    private static void updateRK(boolean pressed, KeyBinding keybind) {
-    	mc.gameSettings.keyBindUseItem.pressed = pressed;
-    	if(pressed) {
-    		presstimeRK++;
-    	}else {
-    		presstimeRK=0;
+    private static void updateRK(String pressed, KeyBinding keybind) {
+    	mc.gameSettings.keyBindUseItem.pressed = (pressed.equals("pRK")||pressed.equals("hRK"));
+    	if(pressed.startsWith("pRK")) {
+    		if(pressed.startsWith("pRK[")) {
+    			String[] split = pressed.split("(\\[|\\])");
+    			setPressed(keybind, Integer.parseInt(split[1]));
+    			return;
+    		}
+    		setPressed(keybind, 1);
     	}
-    	setPressed(keybind, presstimeRK);
     }
     
     private static void setPressed(KeyBinding keybind, int presstime) {
-    	if(presstime==1) {
-    		keybind.pressTime=1;
-    	}
+    	keybind.pressTime=presstime;
     }
     
     public void unpressAllKeys() {

@@ -1,17 +1,17 @@
 package de.tr7zw.tas;
 
+import java.awt.MouseInfo;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Recorder {
 
@@ -42,6 +42,14 @@ public class Recorder {
      * Used to check if a rightclick was held and needs to print rRK in the next tick <br> Used for destinction if leftclick is held or pressed.
      */
     private boolean needsunpressRK = false;
+    /**
+     * Used to track how often the leftclick button was pressed. If the clicklefty remains 2, these values will be printed
+     */
+    private int pressquantityLK=0;
+    /**
+     * Used to track how often the rightclick button was pressed. If the clickrighty remains 2, these values will be printed
+     */
+    private int pressquantityRK=0;
     private float tickpitch;
     private float tickyaw;
     private String location;
@@ -104,33 +112,35 @@ public class Recorder {
     public void onProcessKeybinds() {
         if (!donerecording) {
             GameSettings gameset = mc.gameSettings;
-            boolean leftclack = false;
-            boolean rightclack = false;
+            String leftclack = " ";
+            String rightclack = " ";
             //Printing the correct string for leftclick from onMouseClick
             if (clicklefty == 2) {                        //Scenario for clicking and releasing within a tick
-                leftclack = true;
+                leftclack = "pLK["+pressquantityLK+"]";
                 needsunpressLK = true;
             } else if (clicklefty == 1 && !lkchecker) {        //Scenario for clicking and not releasing within a tick
-                leftclack = true;
+                leftclack = "pLK";
                 needsunpressLK = true;
             } else if (clicklefty == 1) {        //Scenario for holding the button when entering a tick. This would be the case if the above (Scenario for clicking and not releasing within a tick) was the tick beforehand
-                leftclack = true;
+                leftclack = "hLK";
                 needsunpressLK = true;
             } else if (needsunpressLK) {                //Scenario when a button was held or pressed and now it's unpressed.
+            	leftclack = "rLK";
                 needsunpressLK = false;
             }
 
             //Same as above, just for rightclick
             if (clickrighty == 2) {
-                rightclack = true;
+                rightclack = "pRK["+pressquantityRK+"]";
                 needsunpressRK = true;
             } else if (clickrighty == 1 && !rkchecker) {
-                rightclack = true;
+                rightclack = "pRK";
                 needsunpressRK = true;
             } else if (clickrighty == 1) {
-                rightclack = true;
+                rightclack = "hRK";
                 needsunpressRK = true;
             } else if (needsunpressRK) {
+            	rightclack = "rRK";
                 needsunpressRK = false;
             }
             tickpitch = mc.player.rotationPitch;
@@ -156,7 +166,7 @@ public class Recorder {
 
             /*Check if leftclick was pressed and not released
              * if it was pressed and immediately released in one tick, clicklefty would equal 2 and thus lkchecker would be false*/
-            lkchecker = clicklefty == 1;
+            lkchecker= clicklefty == 1;
 
             //Same for clickrighty
             rkchecker = clickrighty == 1;
@@ -164,6 +174,8 @@ public class Recorder {
             //resetting values after the recording is done
             clicklefty = 0;
             clickrighty = 0;
+            pressquantityLK = 0;
+            pressquantityRK = 0;
             //Increment the tickcounter
             if (!donerecording) recordstep++;
 
@@ -182,6 +194,8 @@ public class Recorder {
             } else if (!GameSettings.isKeyDown(mc.gameSettings.keyBindAttack) && clicklefty == 1 && !lkchecker) {
                 //set to quick press (e.g. pressing 2 times in 2 ticks)
                 clicklefty = 2;
+                //increase how many times pressed in a tick
+                pressquantityLK++;
             } else if (!(clicklefty == 2)) {
                 //set to unpressed
                 clicklefty = 0;
@@ -192,7 +206,9 @@ public class Recorder {
             } else if (!GameSettings.isKeyDown(mc.gameSettings.keyBindUseItem) && clickrighty == 1 && !rkchecker) {
                 //set to quick press (e.g. pressing 2 times in 2 ticks)
                 clickrighty = 2;
-            } else if (!(clickrighty == 2)) {
+                //increase how many times pressed in a tick
+                pressquantityRK++;
+            } else if (clickrighty != 2) {
                 //set to unpressed
                 clickrighty = 0;
             }

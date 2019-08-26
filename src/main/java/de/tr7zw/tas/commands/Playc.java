@@ -1,7 +1,12 @@
 package de.tr7zw.tas.commands;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
-import de.tr7zw.tas.*;
+
+import de.tr7zw.tas.TAS;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.command.CommandBase;
@@ -12,10 +17,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Playc extends CommandBase {
 

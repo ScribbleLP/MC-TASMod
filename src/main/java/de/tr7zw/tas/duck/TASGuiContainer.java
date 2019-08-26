@@ -1,8 +1,8 @@
 package de.tr7zw.tas.duck;
 
-import de.tr7zw.tas.Recorder;
-
 import java.io.IOException;
+
+import de.tr7zw.tas.Recorder;
 
 public interface TASGuiContainer {
     void setRecorder(Recorder newRecorder);

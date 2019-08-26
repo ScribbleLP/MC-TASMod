@@ -1,6 +1,14 @@
 package de.tr7zw.tas;
 
-import de.tr7zw.tas.commands.*;
+import java.io.File;
+
+import org.apache.logging.log4j.Logger;
+
+import de.tr7zw.tas.commands.Failc;
+import de.tr7zw.tas.commands.Playc;
+import de.tr7zw.tas.commands.Recordc;
+import de.tr7zw.tas.commands.TasTpc;
+import de.tr7zw.tas.commands.Tasmodc;
 import de.tr7zw.tas.networking.TeleportMessage;
 import de.tr7zw.tas.networking.TeleportMessageHandler;
 import net.minecraft.client.Minecraft;
@@ -15,10 +23,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-
-import java.io.File;
-
-import org.apache.logging.log4j.Logger;
 
 
 @Mod(modid = "tasmod", name = "Tool Asisted Speedrun Mod")

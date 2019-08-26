@@ -1,9 +1,11 @@
 package de.tr7zw.tas.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.tr7zw.tas.InfoGui;
 import de.tr7zw.tas.TAS;
 import de.tr7zw.tas.TASEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -11,9 +13,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Tasmodc extends CommandBase {
 

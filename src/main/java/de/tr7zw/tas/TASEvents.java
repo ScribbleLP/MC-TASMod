@@ -1,7 +1,6 @@
 package de.tr7zw.tas;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;

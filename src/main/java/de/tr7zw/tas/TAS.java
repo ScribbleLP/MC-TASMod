@@ -1,5 +1,12 @@
 package de.tr7zw.tas;
 
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
 import de.tr7zw.tas.duck.PlaybackInput;
 import de.tr7zw.tas.duck.TASGuiContainer;
 import de.tr7zw.tas.networking.TeleportMessage;
@@ -13,13 +20,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
 
 public class TAS {
     public static boolean playing_back = false;
@@ -151,7 +151,7 @@ public class TAS {
     }
 
     public static void teleportToTAS(String[] args) {            //Command to Teleport you to the start of the TASfile
-        if (Minecraft.getMinecraft().getIntegratedServer() != null && !loaded) {
+        if (Minecraft.getMinecraft().getIntegratedServer() != null) {
             File file = new File(Minecraft.getMinecraft().mcDataDir, "saves" + File.separator +
                     "tasfiles" + File.separator + args[0] + ".tas");
             if (file.exists()) {
