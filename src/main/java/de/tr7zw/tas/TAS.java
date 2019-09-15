@@ -13,6 +13,8 @@ import de.tr7zw.tas.networking.TeleportMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -112,7 +114,7 @@ public class TAS {
         recorder = new Recorder();
         recorder.donerecording = false;
         recorder.recordstep = 0;
-        ((PlaybackInput) mc).setRecorder(recorder);
+        ((PlaybackInput) mc.player.movementInput).setRecorder(recorder);
         MinecraftForge.EVENT_BUS.register(recorder);
     }
 
@@ -146,7 +148,7 @@ public class TAS {
         mc.player.motionY = 0;
         mc.player.motionZ = 0;
         tasPlayer = new TASPlayer(loadData(file));
-        ((PlaybackInput) mc).setPlayback(tasPlayer);
+        ((PlaybackInput) mc.player.movementInput).setPlayback(tasPlayer);
         sendMessage("Loaded File");
     }
 
