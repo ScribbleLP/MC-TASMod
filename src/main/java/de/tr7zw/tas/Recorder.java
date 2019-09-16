@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -150,7 +151,7 @@ public class Recorder {
             //Recording the movement
             recording.add(new KeyFrame(gameset.keyBindForward.isKeyDown(), gameset.keyBindLeft.isKeyDown(), gameset.keyBindBack.isKeyDown(), gameset.keyBindRight.isKeyDown(),	//Movement Keys
             		
-            		gameset.keyBindJump.isKeyDown(), gameset.keyBindSneak.isKeyDown(), gameset.keyBindSprint.isKeyDown(),	//Modifying Movement Keys
+            		gameset.keyBindJump.isKeyDown(), gameset.keyBindSneak.isKeyDown()||mc.currentScreen.isShiftKeyDown(), gameset.keyBindSprint.isKeyDown()||mc.currentScreen.isCtrlKeyDown(),	//Modifying Movement Keys
                     
             		leftclack, rightclack,	//Mouse Buttons
                     
