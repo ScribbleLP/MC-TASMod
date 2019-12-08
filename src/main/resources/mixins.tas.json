@@ -1,12 +1,17 @@
 {
   "package": "de.tr7zw.tas.mixin",
+  "minVersion": "0.7.10",
   "refmap": "mixins.tas.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
 	"MixinGuiScreen",
 	"MixinMovementInputFromOptions",
     "MixinGuiContainer",
-    "MixinMinecraft"
+    "MixinMinecraftServer"
+  ],
+  "client": [
+       "MixinMinecraft",
+       "MixinSource"
   ],
   "verbose": true
 }

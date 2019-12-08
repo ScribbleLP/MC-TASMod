@@ -1,0 +1,240 @@
+package me.guichaguri.tastickratechanger;
+
+import org.lwjgl.input.Keyboard;
+
+import me.guichaguri.tastickratechanger.TickrateMessageHandler.TickrateMessage;
+import me.guichaguri.tastickratechanger.api.TickrateAPI;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.GameRules;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+
+/**
+ * @author Guilherme Chaguri
+ */
+@Mod(modid = TickrateChanger.MODID, name = "Tickrate Changer", version = TickrateChanger.VERSION)
+public class TickrateContainer {
+
+    public static boolean KEYS_AVAILABLE = false;
+
+    public static KeyBinding KEY_5 = null;
+    public static KeyBinding KEY_10 = null;
+    public static KeyBinding KEY_15 = null;
+    public static KeyBinding KEY_20 = null;
+    public static KeyBinding KEY_40 = null;
+    public static KeyBinding KEY_60 = null;
+    public static KeyBinding KEY_100 = null;
+    
+    public static KeyBinding KEY_PAUSE=null;
+    public static KeyBinding KEY_ADVANCE=null;
+    public static KeyBinding KEY_CLOSEGUIS=null;
+    
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        TickrateChanger.NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel("TickrateChanger");
+        TickrateChanger.NETWORK.registerMessage(TickrateMessageHandler.class, TickrateMessage.class, 0, Side.CLIENT);
+        TickrateChanger.NETWORK.registerMessage(TickrateMessageHandler.class, TickrateMessage.class, 1, Side.SERVER);
+
+        TickrateChanger.CONFIG_FILE = event.getSuggestedConfigurationFile();
+        Configuration cfg = new Configuration(TickrateChanger.CONFIG_FILE);
+        TickrateChanger.DEFAULT_TICKRATE = (float)cfg.get("default", "tickrate", 20.0,
+                "Default tickrate. The game will always initialize with this value.").getDouble(20);
+        TickrateChanger.MIN_TICKRATE = (float)cfg.get("minimum", "tickrate", 0,
+                "Minimum tickrate from servers. Prevents really low tickrate values.").getDouble(0);
+        TickrateChanger.MAX_TICKRATE = (float)cfg.get("maximum", "tickrate", 1000,
+                "Maximum tickrate from servers. Prevents really high tickrate values.").getDouble(1000);
+        
+        //Added in TASTickratechanger
+        TickrateChanger.TICKCOUNTERBOARDER = (float) cfg.get("tickcounter", "tickrate", 2.0,
+        		"In Tickrates below this value, a Tickcounter will be displayed in the console.").getDouble(2);
+        
+        TickrateChanger.SHOW_MESSAGES = cfg.get("miscellaneous", "show-messages", true,
+                "Whether it will show log messages in the console and the game").getBoolean(true);
+        
+        
+        if(event.getSide().isClient()) {
+        	TickrateChanger.CHANGE_SOUND = cfg.get("miscellaneous", "change-sound", true,
+                    "Whether it will change the sound speed").getBoolean();
+            KEYS_AVAILABLE = cfg.get("miscellaneous", "keybindings", false,
+                    "Whether it will have special keys for setting the tickrate").getBoolean(false);
+	        if(KEYS_AVAILABLE) {
+	            // Keys
+	            KEY_5 = new KeyBinding("tickratechanger.keybinding.5", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_10 = new KeyBinding("tickratechanger.keybinding.10", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_15 = new KeyBinding("tickratechanger.keybinding.15", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_20 = new KeyBinding("tickratechanger.keybinding.20", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_40 = new KeyBinding("tickratechanger.keybinding.40", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_60 = new KeyBinding("tickratechanger.keybinding.60", Keyboard.KEY_NONE, "key.categories.misc");
+	            KEY_100 = new KeyBinding("tickratechanger.keybinding.100", Keyboard.KEY_NONE, "key.categories.misc");
+	            ClientRegistry.registerKeyBinding(KEY_5);
+	            ClientRegistry.registerKeyBinding(KEY_10);
+	            ClientRegistry.registerKeyBinding(KEY_15);
+	            ClientRegistry.registerKeyBinding(KEY_20);
+	            ClientRegistry.registerKeyBinding(KEY_40);
+	            ClientRegistry.registerKeyBinding(KEY_60);
+	            ClientRegistry.registerKeyBinding(KEY_100);
+	        }
+	        	KEY_PAUSE = new KeyBinding("Pause Key", Keyboard.KEY_O, "key.categories.misc");
+	        	KEY_ADVANCE = new KeyBinding("TickAdvance Key", Keyboard.KEY_P, "key.categories.misc");
+	        	KEY_CLOSEGUIS = new KeyBinding("CloseGui Key", Keyboard.KEY_U, "key.categories.misc");
+	        	ClientRegistry.registerKeyBinding(KEY_PAUSE);
+	        	ClientRegistry.registerKeyBinding(KEY_ADVANCE);
+	        	ClientRegistry.registerKeyBinding(KEY_CLOSEGUIS);
+        }
+        cfg.save();
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new TickrateEvents());
+        new TickrateChanger();
+        TickrateAPI.changeTickrate(TickrateChanger.DEFAULT_TICKRATE);
+    }
+
+    @EventHandler
+    public void start(FMLServerStartingEvent event) {
+        TickrateChanger.COMMAND = new TickrateCommand();
+        event.registerServerCommand(TickrateChanger.COMMAND);
+    }
+
+    @EventHandler
+    public void imc(IMCEvent event) {
+        for(IMCMessage msg : event.getMessages()) {
+            if(!msg.key.equalsIgnoreCase("tickrate")) continue;
+
+            try {
+                TickrateAPI.processIMC(msg);
+            } catch(Exception ex) {}
+        }
+    }
+
+    @SubscribeEvent
+    public void chat(ClientChatReceivedEvent event) {
+        ITextComponent message = event.getMessage();
+
+        if(message instanceof TextComponentTranslation) {
+
+            TextComponentTranslation t = (TextComponentTranslation)message;
+            if(t.getKey().equals("tickratechanger.show.clientside")) {
+                event.setMessage(TickrateCommand.clientTickrateMsg());
+            }
+
+        }
+    }
+
+    @SubscribeEvent
+    public void disconnect(ClientDisconnectionFromServerEvent event) {
+        TickrateAPI.changeServerTickrate(TickrateChanger.DEFAULT_TICKRATE);
+        TickrateAPI.changeClientTickrate(null, TickrateChanger.DEFAULT_TICKRATE);
+    }
+
+    @SubscribeEvent
+    public void connect(ClientConnectedToServerEvent event) {
+        if(event.isLocal()) {
+            float tickrate = TickrateChanger.DEFAULT_TICKRATE;
+            try {
+                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                if(server != null) {
+                    GameRules rules = server.getEntityWorld().getGameRules();
+                    if(rules.hasRule(TickrateChanger.GAME_RULE)) {
+                        tickrate = Float.parseFloat(rules.getString(TickrateChanger.GAME_RULE));
+                    }
+                }
+            } catch(Exception ex) {
+                ex.printStackTrace();
+            }
+            TickrateAPI.changeServerTickrate(tickrate);
+            TickrateAPI.changeClientTickrate(null, tickrate);
+        } else {
+            TickrateAPI.changeClientTickrate(null, 20F);
+        }
+    }
+
+    @SubscribeEvent
+    public void connect(PlayerLoggedInEvent event) {
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+            float tickrate = TickrateChanger.DEFAULT_TICKRATE;
+            try {
+                MinecraftServer server = event.player.getServer();
+                if(server != null) {
+                    GameRules rules = server.getEntityWorld().getGameRules();
+                    if(rules.hasRule(TickrateChanger.GAME_RULE)) {
+                        tickrate = Float.parseFloat(rules.getString(TickrateChanger.GAME_RULE));
+                    }
+                }
+            } catch(Exception ex) {
+                ex.printStackTrace();
+            }
+            TickrateAPI.changeClientTickrate(event.player, tickrate);
+        }
+    }
+
+    private long lastKeyInputTime = 0;
+
+    @SubscribeEvent
+    public void key(KeyInputEvent event) {
+    	if(!(TickrateChanger.TICKS_PER_SECOND==0&&Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
+	    	if(KEY_PAUSE.isPressed()) {
+	    		TickrateAPI.pauseUnpauseGame();
+	    	}
+	    	if(KEY_ADVANCE.isPressed()) {
+	    		TickrateAPI.advanceTick();
+	    	}
+	    	if(KEY_CLOSEGUIS.isPressed()) {
+	    		if(TickrateAPI.getClientTickrate()==0){
+	    			Minecraft.getMinecraft().displayGuiScreen(null);
+	    		}
+	    	}
+	        if(!KEYS_AVAILABLE) return;
+	
+	        float tickrate;
+	        if(KEY_5.isPressed()) {
+	            tickrate = 5;
+	        } else if(KEY_10.isPressed()) {
+	            tickrate = 10;
+	        } else if(KEY_15.isPressed()) {
+	            tickrate = 15;
+	        } else if(KEY_20.isPressed()) {
+	            tickrate = 20;
+	        } else if(KEY_40.isPressed()) {
+	            tickrate = 40;
+	        } else if(KEY_60.isPressed()) {
+	            tickrate = 60;
+	        } else if(KEY_100.isPressed()) {
+	            tickrate = 100;
+	        } else {
+	            return;
+	        }
+	
+	        // Cooldown. 0.1 real life second to prevent spam
+	        if(lastKeyInputTime > Minecraft.getSystemTime() - 100) return;
+	        lastKeyInputTime = Minecraft.getSystemTime();
+	
+	        TickrateChanger.NETWORK.sendToServer(new TickrateMessage(tickrate));
+    	}
+    }
+
+}

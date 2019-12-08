@@ -1,8 +1,10 @@
 package de.tr7zw.tas;
 
 import java.io.File;
+import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 
 import de.tr7zw.tas.commands.Failc;
 import de.tr7zw.tas.commands.Playc;
@@ -12,8 +14,10 @@ import de.tr7zw.tas.commands.Tasmodc;
 import de.tr7zw.tas.networking.TeleportMessage;
 import de.tr7zw.tas.networking.TeleportMessageHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -28,7 +32,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @Mod(modid = "tasmod", name = "Tool Asisted Speedrun Mod")
 
 public class TASModLoader {
-	public static Logger LOGGER;
+	public static Logger LOGGER= LogManager.getLogger("TASmod");
 
 
     @Instance
@@ -37,9 +41,10 @@ public class TASModLoader {
     
     public static SimpleNetworkWrapper NETWORK;
     
+    //public static KeyBinding testkey = new KeyBinding("A test", Keyboard.KEY_R, "TASmod");
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	LOGGER=event.getModLog();
         //Config File
         Configuration config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
@@ -52,6 +57,7 @@ public class TASModLoader {
         //Networking
         NETWORK= NetworkRegistry.INSTANCE.newSimpleChannel("tasmod");
         NETWORK.registerMessage(TeleportMessageHandler.class, TeleportMessage.class, 0, Side.SERVER);
+        
     }
 
     @EventHandler
@@ -59,6 +65,7 @@ public class TASModLoader {
         MinecraftForge.EVENT_BUS.register(new TASEvents());
         MinecraftForge.EVENT_BUS.register(TAS.class);
         new File(Minecraft.getMinecraft().mcDataDir, "saves" + File.separator + "tasfiles").mkdir();
+        //ClientRegistry.registerKeyBinding(testkey);
     }
 
     @EventHandler

@@ -77,6 +77,7 @@ dependencies {
 
     // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
     //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    
 
     // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
     // except that these dependencies get remapped to your current MCP mappings
@@ -126,6 +127,7 @@ shadowJar {
     relocate 'com.fasterxml', 'de.tr7zw.tas.repack.com.fasterxml'
     classifier "shadow"
     exclude 'dummyThing'
+    exclude 'me/guichaguri/'
 
 
     afterEvaluate {

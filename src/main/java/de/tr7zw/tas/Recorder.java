@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.guichaguri.tastickratechanger.TASTickEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.GameSettings;
@@ -13,6 +14,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
 public class Recorder {
 
@@ -187,8 +189,8 @@ public class Recorder {
      * Method to check if Mousebuttons are pressed or held.
      */
     @SubscribeEvent
-    public void onMouseClick(TickEvent.RenderTickEvent ev) {
-        if (!donerecording && ev.phase == Phase.START) {
+    public void onMouseClick(RenderTickEvent ev) {
+        if (!donerecording&&ev.phase==Phase.START) {
             if (GameSettings.isKeyDown(mc.gameSettings.keyBindAttack)) {
                 //set to pressed
                 clicklefty = 1;

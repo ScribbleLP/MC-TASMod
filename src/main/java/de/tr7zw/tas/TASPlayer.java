@@ -9,6 +9,8 @@ import org.lwjgl.input.Mouse;
 
 import de.tr7zw.tas.duck.PlaybackInput;
 import de.tr7zw.tas.duck.TASGuiContainer;
+import me.guichaguri.tastickratechanger.TickrateChanger;
+import me.guichaguri.tastickratechanger.api.TickrateAPI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -24,24 +26,24 @@ public class TASPlayer implements PlaybackMethod {
     private static Minecraft mc = Minecraft.getMinecraft();
     private List<KeyFrame> keyFrames;
     private static int calcstate = 0;
-    private Robot rob;
     private boolean openedInventory;
     private static int presstimeLK=0;
     private static int presstimeRK=0;
     public static KeyFrame pFrame;
+    private static float betweenyaw;
+    /**
+     * Set's headrotations between Ticks to smoothen the playback
+     */
+    public static boolean fillerHeadrotations;
 
     public TASPlayer(List<KeyFrame> keyFrames) {
         TAS.playing_back = true;
         this.keyFrames = keyFrames;
-        try {
-            this.rob = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
+        betweenyaw=uncalc(keyFrames.get(0).yaw, mc.player.rotationYaw);
     }
 
     public static void keyBindsHook() {
-        updateKeybinds(pFrame);
+        updateKeybinds(pFrame, pFrame);
     }
 
     public static Float recalcYaw(float Yaw) {
@@ -51,11 +53,11 @@ public class TASPlayer implements PlaybackMethod {
 
     }
 
-    private static float uncalc(float yaw) {
-        if (recalcYaw(mc.player.rotationYaw) >= 0 && (recalcYaw(mc.player.rotationYaw) - yaw) > 180) {
+    private static float uncalc(float yaw, float currentyaw) {
+        if (recalcYaw(currentyaw) >= 0 && (recalcYaw(currentyaw) - yaw) > 180) {
             calcstate++;
         }
-        if (recalcYaw(mc.player.rotationYaw) < 0 && (recalcYaw(mc.player.rotationYaw) - yaw) < -180) {
+        if (recalcYaw(currentyaw) < 0 && (recalcYaw(currentyaw) - yaw) < -180) {
             calcstate--;
         }
         return yaw + (360 * calcstate);
@@ -83,12 +85,15 @@ public class TASPlayer implements PlaybackMethod {
             return;
         }
         KeyFrame frame = keyFrames.get(step++);
-
+        KeyFrame framenext = keyFrames.get(step);
+        if(keyFrames.size()!=step) {
+        	
+        }
         if (breaking) {
             step = keyFrames.size();
         }
 
-        updateKeybinds(frame);
+        updateKeybinds(frame, framenext);
 
 
         openedInventory = frame.inventory;
@@ -150,7 +155,7 @@ public class TASPlayer implements PlaybackMethod {
 
     }
 
-    private static void updateKeybinds(KeyFrame frame) {
+    private static void updateKeybinds(KeyFrame frame, KeyFrame framenext) {
     	updateLK(frame.leftClick, mc.gameSettings.keyBindAttack);
         updateRK(frame.rightClick, mc.gameSettings.keyBindUseItem);
         mc.gameSettings.keyBindForward.pressed = frame.forwardKeyDown;
@@ -165,8 +170,15 @@ public class TASPlayer implements PlaybackMethod {
             mc.gameSettings.keyBindInventory.pressTime = -1;
         }
         mc.player.inventory.currentItem = frame.slot;                    //Read Inventory Slot from File etc...
+        
+        
         mc.player.rotationPitch = frame.pitch;
-        mc.player.rotationYaw = uncalc(frame.yaw);
+        mc.player.rotationYaw = betweenyaw;
+        float framer=uncalc(framenext.yaw, mc.player.rotationYaw);
+        betweenyaw=framer;
+        /*if(fillerHeadrotations) {
+        	setBetweenRotation(frame.pitch, mc.player.rotationYaw, framenext.pitch, framer);
+        }*/
     }
 
     private void moveMouse(int x, int y) {
@@ -219,4 +231,12 @@ public class TASPlayer implements PlaybackMethod {
          mc.gameSettings.keyBindSprint.pressed = false;
          mc.gameSettings.keyBindInventory.pressed = false;
     }
+    /*private static void setBetweenRotation(float currentpitch, float currentyaw, float nextpitch, float nextyaw) {
+    	//Get the distance between coordinates
+    	float pitchtomove=nextpitch-currentpitch;
+    	float yawtomove=nextyaw-currentyaw;
+    	//Get the increments to show smooth camerapan
+    	TASEvents.incrementsPitch=pitchtomove/12;
+    	TASEvents.incrementsYaw=yawtomove/12;
+    }*/
 }
