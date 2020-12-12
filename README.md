@@ -1,4 +1,6 @@
-# TASmod
+# This repository is now discontinued!
+Check the new one [here](https://github.com/ScribbleLP/TASMod)  
+  
 A mod to record and play back your inputs!
 ## What is TASsing?
 TASsing or Tool-Assisted-Speedrunning is a speedrun using tools, to get the fastest possible speedrun, which is oftentimes impossible to accomplish as a human... The purpose of TASsing is for entertainment and to find new strategies for RTA (Real-Time-Attack) Speedrunning.  
